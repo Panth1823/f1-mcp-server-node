@@ -1,0 +1,33 @@
+# Node.js
+node_modules/
+build/
+dist/
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production
+
+# FastF1 Cache
+fastf1_cache/
+
+# Logs
+logs/
+log/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Build output
+build/
+dist/ 

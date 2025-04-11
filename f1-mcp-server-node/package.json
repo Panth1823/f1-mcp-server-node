@@ -1,0 +1,35 @@
+{
+  "name": "f1-mcp-server",
+  "version": "1.0.0",
+  "description": "F1 MCP Server using OpenF1 and Ergast APIs",
+  "main": "build/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "@types/express": "^5.0.1",
+    "@types/ws": "^8.18.1",
+    "axios": "^1.6.2",
+    "express": "^5.1.0",
+    "typescript": "^5.0.0",
+    "ws": "^8.18.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "ts-node": "^10.9.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "",
+  "license": "MIT"
+}
