@@ -1,4 +1,4 @@
-import { WebSocketServer, WebSocket } from 'ws';
+import { WebSocketServer, WebSocket, MessageEvent } from 'ws';
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 
 interface LiveTimingClient {
@@ -21,11 +21,11 @@ class LiveTimingServer {
     this.wss = new WebSocketServer({ port });
 
     this.wss.on('connection', (ws: WebSocket) => {
-      ws.addEventListener('message', (event) => {
+      ws.on('message', (data) => {
         try {
-          const data = JSON.parse(event.data.toString());
-          if (data.type === 'subscribe' && data.sessionId) {
-            this.addClient(ws, data.sessionId);
+          const parsedData = JSON.parse(data.toString());
+          if (parsedData.type === 'subscribe' && parsedData.sessionId) {
+            this.addClient(ws, parsedData.sessionId);
           }
         } catch (error) {
           ws.send(JSON.stringify({

@@ -6,12 +6,26 @@ A Formula 1 Machine Control Protocol (MCP) server that provides real-time and hi
 
 - Real-time session data from OpenF1
 - Historical race data from Ergast API
-- Driver telemetry and car data
+- Enhanced telemetry and car data analysis
+- Detailed sector time analysis
+- Tyre strategy and performance insights
+- Track position visualization
+- Driver performance comparison
+- Qualifying session analysis
+- Sprint race data analysis
+- Driver career statistics
+- Circuit records and history
+- Race start performance analysis
 - Team radio and race control messages
 - Weather information
 - Championship standings
 - Circuit information
 - Pit stop data and analysis
+- Race simulation and predictions
+- Battle analysis and overtaking probability
+- Driver performance metrics
+- Lap-by-lap detailed analysis
+- Season comparison tools
 - In-memory caching for optimized performance
 - Comprehensive error handling
 - WebSocket support for live updates
@@ -70,12 +84,34 @@ node test-mcp-server.js
 - `getLiveTimingData` - Get real-time lap timing information
 - `getCurrentSessionStatus` - Get current session information
 - `getWeatherData` - Get real-time weather information
-- `getCarData` - Get detailed car telemetry
+- `getCarData` - Get basic car telemetry
 - `getPitStopData` - Get pit stop information
 - `getTeamRadio` - Get team radio communications
 - `getRaceControlMessages` - Get race control messages
 
-#### Historical Data (Ergast API)
+#### Enhanced Telemetry and Analysis
+- `getDetailedTelemetry` - Get comprehensive telemetry data including ERS, fuel, and tyre information
+- `getSectorAnalysis` - Get detailed sector time analysis with personal and session bests
+- `getTyreStrategy` - Get tyre compound usage and performance analysis
+- `getTrackPositions` - Get real-time track position data and gaps
+- `getDriverComparison` - Compare telemetry data between two drivers
+
+#### Advanced Race Analysis
+- `getLapAnalysis` - Get detailed analysis of individual laps including sector times, speed traps, and conditions
+- `getRaceSimulation` - Get predictive race analysis including optimal pit windows and strategy
+- `getDriverPerformance` - Get comprehensive driver performance metrics including sector consistency
+- `getBattleAnalysis` - Get detailed analysis of on-track battles including overtaking probability
+
+#### Session-Specific Analysis
+- `getQualifyingAnalysis` - Get detailed qualifying session analysis with all session times
+- `getSprintSessionData` - Get comprehensive sprint race session data
+- `getRaceStartAnalysis` - Get detailed analysis of race start performance
+- `getTyrePerformance` - Get detailed tyre performance and degradation analysis
+
+#### Historical and Statistical Analysis
+- `getDriverCareerStats` - Get comprehensive career statistics for a driver
+- `getCircuitRecords` - Get historical records and statistics for a circuit
+- `getSeasonComparison` - Compare statistics between two seasons
 - `getDriverStandings` - Get driver championship standings
 - `getConstructorStandings` - Get constructor championship standings
 - `getHistoricRaceResults` - Get race results

@@ -1,6 +1,12 @@
 import { spawn } from 'child_process';
 import { readFileSync, writeFileSync, appendFileSync } from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import axios from 'axios';
+import { McpError } from '@modelcontextprotocol/sdk/types.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Helper function to log to both console and file
 function log(message, data = null) {
@@ -151,113 +157,120 @@ async function main() {
 }
 
 async function runTests(client) {
-  const tests = [
-    // Test original tools
-    {
-      name: "Getting current session status",
-      method: "tools/call",
-      params: { name: "getCurrentSessionStatus", arguments: {} }
-    },
-    {
-      name: "Getting driver standings for 2023",
-      method: "tools/call",
-      params: { name: "getDriverStandings", arguments: { year: 2023 } }
-    },
-    {
-      name: "Getting constructor standings for 2023",
-      method: "tools/call",
-      params: { name: "getConstructorStandings", arguments: { year: 2023 } }
-    },
-    {
-      name: "Getting historic race results for 2023 Abu Dhabi GP",
-      method: "tools/call",
-      params: { name: "getHistoricRaceResults", arguments: { year: 2023, round: 22 } }
-    },
-    {
-      name: "Getting driver info for Max Verstappen",
-      method: "tools/call",
-      params: { name: "getDriverInfo", arguments: { driverId: "1" } }
-    },
-    
-    // Test new OpenF1 tools
-    {
-      name: "Getting weather data",
-      method: "tools/call",
-      params: { name: "getWeatherData", arguments: {} }
-    },
-    {
-      name: "Getting car data for Lewis Hamilton",
-      method: "tools/call",
-      params: { name: "getCarData", arguments: { driverNumber: "44" } }
-    },
-    {
-      name: "Getting pit stop data",
-      method: "tools/call",
-      params: { name: "getPitStopData", arguments: {} }
-    },
-    {
-      name: "Getting team radio data",
-      method: "tools/call",
-      params: { name: "getTeamRadio", arguments: {} }
-    },
-    {
-      name: "Getting race control messages",
-      method: "tools/call",
-      params: { name: "getRaceControlMessages", arguments: {} }
-    },
-    
-    // Test new Ergast API tools
-    {
-      name: "Getting 2023 race calendar",
-      method: "tools/call",
-      params: { name: "getRaceCalendar", arguments: { year: 2023 } }
-    },
-    {
-      name: "Getting circuit info for Monza",
-      method: "tools/call",
-      params: { name: "getCircuitInfo", arguments: { circuitId: "monza" } }
-    },
-    {
-      name: "Getting season list",
-      method: "tools/call",
-      params: { name: "getSeasonList", arguments: { limit: 5 } }
-    },
-    {
-      name: "Getting qualifying results for 2023 Monaco GP",
-      method: "tools/call",
-      params: { name: "getQualifyingResults", arguments: { year: 2023, round: 7 } }
-    },
-    {
-      name: "Getting detailed driver information for Hamilton",
-      method: "tools/call",
-      params: { name: "getDriverInformation", arguments: { driverId: "hamilton" } }
-    },
-    {
-      name: "Getting constructor information for Ferrari",
-      method: "tools/call",
-      params: { name: "getConstructorInformation", arguments: { constructorId: "ferrari" } }
-    },
-    
-    // Test utility functions
-    {
-      name: "Clearing cache",
-      method: "tools/call",
-      params: { name: "clearCache", arguments: {} }
-    }
-  ];
-  
-  // Run each test with a delay between them
-  for (const test of tests) {
-    log(`Test: ${test.name}...`);
+  console.log('Starting F1 MCP Server Integration Tests...\n');
+  const failures = [];
+  let testCount = 0;
+  let passCount = 0;
+
+  async function runTest(name, testFn) {
+    testCount++;
     try {
-      const result = await client.sendRequest(test.method, test.params);
-      log(`${test.name} result:`, result);
+      process.stdout.write(`Running test: ${name}... `);
+      await testFn();
+      process.stdout.write('✓ Passed\n');
+      passCount++;
     } catch (error) {
-      log(`[ERROR] ${test.name} test failed:`, error);
+      process.stdout.write('✗ Failed\n');
+      failures.push({
+        name,
+        error: error.message
+      });
     }
-    
-    // Wait between requests to avoid overwhelming the server
-    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+
+  // Test live timing data
+  await runTest('Live Timing Data', async () => {
+    const response = await axios.get('http://localhost:3000/api/live-timing');
+    if (!Array.isArray(response.data)) {
+      throw new Error('Expected array of live timing data');
+    }
+  });
+
+  // Test current session status
+  await runTest('Current Session Status', async () => {
+    const response = await axios.get('http://localhost:3000/api/session-status');
+    if (!response.data.session_key) {
+      throw new Error('Missing session key in response');
+    }
+  });
+
+  // Test weather data
+  await runTest('Weather Data', async () => {
+    const response = await axios.get('http://localhost:3000/api/weather');
+    if (!Array.isArray(response.data)) {
+      throw new Error('Expected array of weather data');
+    }
+  });
+
+  // Test historical race results
+  await runTest('Historical Race Results', async () => {
+    const response = await axios.get('http://localhost:3000/api/results/2023/1');
+    if (!response.data.raceName) {
+      throw new Error('Missing race name in response');
+    }
+  });
+
+  // Test driver career statistics
+  await runTest('Driver Career Stats', async () => {
+    const response = await axios.get('http://localhost:3000/api/driver/HAM/career');
+    if (!response.data.total_races) {
+      throw new Error('Missing total races in career stats');
+    }
+  });
+
+  // Test telemetry data
+  await runTest('Detailed Telemetry', async () => {
+    const response = await axios.get('http://localhost:3000/api/telemetry/44/1');
+    if (!Array.isArray(response.data)) {
+      throw new Error('Expected array of telemetry data');
+    }
+  });
+
+  // Test sector analysis
+  await runTest('Sector Analysis', async () => {
+    const response = await axios.get('http://localhost:3000/api/sectors/1234/1');
+    if (!Array.isArray(response.data)) {
+      throw new Error('Expected array of sector data');
+    }
+  });
+
+  // Test tyre strategy
+  await runTest('Tyre Strategy', async () => {
+    const response = await axios.get('http://localhost:3000/api/tyres/1234/44');
+    if (!Array.isArray(response.data)) {
+      throw new Error('Expected array of tyre strategy data');
+    }
+  });
+
+  // Test battle analysis
+  await runTest('Battle Analysis', async () => {
+    const response = await axios.get('http://localhost:3000/api/battle/1234/44/33/1');
+    if (!response.data.driver1 || !response.data.driver2) {
+      throw new Error('Missing driver data in battle analysis');
+    }
+  });
+
+  // Test qualifying analysis
+  await runTest('Qualifying Analysis', async () => {
+    const response = await axios.get('http://localhost:3000/api/qualifying/1234');
+    if (!Array.isArray(response.data)) {
+      throw new Error('Expected array of qualifying data');
+    }
+  });
+
+  // Print test results
+  console.log('\nTest Results:');
+  console.log(`Total Tests: ${testCount}`);
+  console.log(`Passed: ${passCount}`);
+  console.log(`Failed: ${failures.length}`);
+
+  if (failures.length > 0) {
+    console.log('\nFailures:');
+    failures.forEach(failure => {
+      console.log(`\n${failure.name}:`);
+      console.log(failure.error);
+    });
+    process.exit(1);
   }
 }
 

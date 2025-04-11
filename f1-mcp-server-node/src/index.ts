@@ -110,7 +110,7 @@ server.tool('getTeamRadio', {
   sessionKey: z.string().optional(),
   driverNumber: z.string().optional()
 }, async ({ sessionKey, driverNumber }) => {
-  const data = await f1Service.getTeamRadio(sessionKey, driverNumber);
+  const data = await f1Service.getTeamRadio(sessionKey || '', driverNumber || '');
   return {
     content: [{ type: 'text', text: JSON.stringify(data) }]
   };
@@ -119,7 +119,7 @@ server.tool('getTeamRadio', {
 server.tool('getRaceControlMessages', {
   sessionKey: z.string().optional()
 }, async ({ sessionKey }) => {
-  const data = await f1Service.getRaceControlMessages(sessionKey);
+  const data = await f1Service.getRaceControlMessages(sessionKey || '');
   return {
     content: [{ type: 'text', text: JSON.stringify(data) }]
   };
@@ -192,7 +192,9 @@ server.tool('clearCache', {}, async () => {
 
 console.log('Starting F1 MCP Server...');
 const transport = new StdioServerTransport();
-await server.connect(transport);
+(async () => {
+  await server.connect(transport);
+})();
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught exception:', err);
