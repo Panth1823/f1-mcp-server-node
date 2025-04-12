@@ -34,8 +34,22 @@ server.tool('getDriverInfo', { driverId: z.string() }, async ({ driverId }) => {
   };
 });
 
+// Tool to find historical session keys
+server.tool('getHistoricalSessions', {
+  year: z.number().optional(),
+  circuit_short_name: z.string().optional(),
+  session_name: z.string().optional(),
+  country_name: z.string().optional(),
+  location: z.string().optional()
+}, async (filters) => {
+  const data = await f1Service.getHistoricalSessions(filters);
+  return {
+    content: [{ type: 'text', text: JSON.stringify(data) }]
+  };
+});
+
 // Historic data endpoints
-server.tool('getHistoricRaceResults', { 
+server.tool('getHistoricRaceResults', {
   year: z.number(), 
   round: z.number() 
 }, async ({ year, round }) => {

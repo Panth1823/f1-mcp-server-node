@@ -35,6 +35,24 @@ export interface SessionData {
   status: string;
 }
 
+// Interface for data from /sessions endpoint
+export interface HistoricalSessionData {
+  circuit_key: number;
+  circuit_short_name: string;
+  country_code: string;
+  country_key: number;
+  country_name: string;
+  date_end: string;
+  date_start: string;
+  gmt_offset: string;
+  location: string;
+  meeting_key: number;
+  session_key: number; // This is the key we need
+  session_name: string;
+  session_type: string;
+  year: number;
+}
+
 export interface WeatherData {
   air_temperature: number;
   track_temperature: number;
@@ -525,6 +543,38 @@ export class F1DataService {
         `${errorMessage}: ${error.response?.status || 'Unknown error'}`
       );
     }
+  }
+
+  // Method to get historical session keys
+  async getHistoricalSessions(filters?: {
+    year?: number;
+    circuit_short_name?: string;
+    session_name?: string;
+    country_name?: string;
+    location?: string;
+  }): Promise<HistoricalSessionData[]> {
+    let url = `${OPENF1_BASE_URL}/sessions`;
+    const params = new URLSearchParams();
+
+    if (filters) {
+      if (filters.year) params.append('year', filters.year.toString());
+      if (filters.circuit_short_name) params.append('circuit_short_name', filters.circuit_short_name);
+      if (filters.session_name) params.append('session_name', filters.session_name);
+      if (filters.country_name) params.append('country_name', filters.country_name);
+      if (filters.location) params.append('location', filters.location);
+    }
+
+    const queryString = params.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+
+    return this.fetchWithErrorHandling<HistoricalSessionData[]>(
+      url,
+      'Failed to fetch historical sessions',
+      true, // Use cache, but maybe with a longer TTL? Default is 5 mins.
+      this.defaultCacheTTL 
+    );
   }
 
   // OpenF1 API Methods (Live/Recent Data)
@@ -1285,4 +1335,4 @@ export class F1DataService {
       throw new Error('Failed to fetch sprint results');
     }
   }
-} 
+}
