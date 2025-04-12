@@ -1,118 +1,61 @@
-import { WebSocketServer, WebSocket, MessageEvent } from 'ws';
-import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
+import axios from 'axios';
+import { McpError, ErrorCode } from '@modelcontextprotocol/sdk';
 
-interface LiveTimingClient {
-  ws: WebSocket;
-  sessionId: string;
-}
+export class F1DataService {
+  private static instance: F1DataService;
+  private cache: Map<string, { data: any; expiry: number }> = new Map();
 
-class LiveTimingServer {
-  private clients: Set<LiveTimingClient>;
-  private updateInterval: NodeJS.Timeout | null;
-  private wss: WebSocketServer | null;
+  private constructor() {}
 
-  constructor() {
-    this.clients = new Set();
-    this.updateInterval = null;
-    this.wss = null;
+  public static getInstance(): F1DataService {
+    if (!F1DataService.instance) {
+      F1DataService.instance = new F1DataService();
+    }
+    return F1DataService.instance;
   }
 
-  start(port: number = 8080) {
-    this.wss = new WebSocketServer({ port });
-
-    this.wss.on('connection', (ws: WebSocket) => {
-      ws.on('message', (data) => {
-        try {
-          const parsedData = JSON.parse(data.toString());
-          if (parsedData.type === 'subscribe' && parsedData.sessionId) {
-            this.addClient(ws, parsedData.sessionId);
-          }
-        } catch (error) {
-          ws.send(JSON.stringify({
-            type: 'error',
-            message: 'Invalid message format'
-          }));
-        }
-      });
-
-      ws.addEventListener('close', () => {
-        this.removeClient(ws);
-      });
-    });
-
-    this.startUpdateLoop();
+  private getCachedData<T>(key: string): T | null {
+    const cachedItem = this.cache.get(key);
+    if (cachedItem && cachedItem.expiry > Date.now()) {
+      return cachedItem.data;
+    }
+    return null;
   }
 
-  private addClient(ws: WebSocket, sessionId: string) {
-    this.clients.add({ ws, sessionId });
+  private setCachedData<T>(key: string, data: T, ttl?: number): void {
+    const expiry = ttl ? Date.now() + ttl * 1000 : Infinity;
+    this.cache.set(key, { data, expiry });
   }
 
-  private removeClient(ws: WebSocket) {
-    for (const client of this.clients) {
-      if (client.ws === ws) {
-        this.clients.delete(client);
-        break;
+  private async fetchWithErrorHandling<T>(
+    url: string, 
+    errorMessage: string, 
+    useCache: boolean = true,
+    cacheTTL?: number
+  ): Promise<T> {
+    const cacheKey = url;
+    
+    if (useCache) {
+      const cachedData = this.getCachedData<T>(cacheKey);
+      if (cachedData) {
+        return cachedData;
       }
     }
-  }
 
-  private startUpdateLoop() {
-    if (this.updateInterval) {
-      clearInterval(this.updateInterval);
-    }
-
-    this.updateInterval = setInterval(() => {
-      this.broadcastUpdates();
-    }, 1000); // Update every second
-  }
-
-  private async broadcastUpdates() {
-    for (const client of this.clients) {
-      try {
-        const timingData = await this.getLiveTimingData(client.sessionId);
-        client.ws.send(JSON.stringify({
-          type: 'timing',
-          data: timingData,
-          timestamp: new Date().toISOString()
-        }));
-      } catch (error) {
-        client.ws.send(JSON.stringify({
-          type: 'error',
-          message: error instanceof Error ? error.message : 'Unknown error'
-        }));
+    try {
+      const response = await axios.get<T>(url);
+      
+      if (useCache) {
+        this.setCachedData(cacheKey, response.data, cacheTTL);
       }
-    }
-  }
-
-  private async getLiveTimingData(sessionId: string) {
-    // This would be replaced with actual live timing data fetching
-    // For now, return mock data
-    return {
-      sessionId,
-      timestamp: new Date().toISOString(),
-      drivers: [
-        {
-          number: "44",
-          position: 1,
-          lastLapTime: "1:23.456",
-          gap: "+0.000"
-        }
-        // Add more mock driver data as needed
-      ]
-    };
-  }
-
-  stop() {
-    if (this.updateInterval) {
-      clearInterval(this.updateInterval);
-      this.updateInterval = null;
-    }
-
-    if (this.wss) {
-      this.wss.close();
-      this.wss = null;
+      
+      return response.data;
+    } catch (error: any) {
+      console.error(`${errorMessage}:`, error);
+      throw new McpError(
+        ErrorCode.InternalError,
+        `${errorMessage}: ${error.response?.status || 'Unknown error'}`
+      );
     }
   }
 }
-
-export const liveTimingServer = new LiveTimingServer(); 

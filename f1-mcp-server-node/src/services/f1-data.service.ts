@@ -511,16 +511,19 @@ export class F1DataService {
     }
 
     try {
-      const response = await axios.get(url);
+      const response = await axios.get<T>(url);
       
       if (useCache) {
         this.setCachedData(cacheKey, response.data, cacheTTL);
       }
       
       return response.data;
-    } catch (error) {
-      console.error(`Error: ${errorMessage}:`, error);
-      throw new McpError(ErrorCode.InternalError, errorMessage);
+    } catch (error: any) {
+      console.error(`${errorMessage}:`, error);
+      throw new McpError(
+        ErrorCode.InternalError,
+        `${errorMessage}: ${error.response?.status || 'Unknown error'}`
+      );
     }
   }
 

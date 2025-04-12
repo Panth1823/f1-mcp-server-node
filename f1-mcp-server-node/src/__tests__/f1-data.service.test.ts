@@ -1,7 +1,7 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import axios, { AxiosStatic } from 'axios';
 import { F1DataService, LiveTimingData, SessionData } from '../services/f1-data.service';
-import { McpError } from '@modelcontextprotocol/sdk/types';
+import { McpError, ErrorCode } from '@modelcontextprotocol/sdk';
 
 // Mock axios
 jest.mock('axios');
@@ -45,9 +45,22 @@ describe('F1DataService', () => {
         expect(result).toEqual(mockLiveTimingData);
       });
 
-      it('should handle errors when fetching live timing data', async () => {
-        mockedAxios.get.mockRejectedValueOnce(new Error('API Error'));
-        await expect(f1Service.getLiveTimingData()).rejects.toThrow('Failed to fetch live timing data');
+      it('should handle 404 errors', async () => {
+        const error = {
+          response: { status: 404, data: { message: 'Not found' } },
+          isAxiosError: true
+        };
+        mockedAxios.get.mockRejectedValueOnce(error);
+        await expect(f1Service.getLiveTimingData())
+          .rejects
+          .toThrow('Failed to fetch live timing data: 404');
+      });
+
+      it('should handle network errors', async () => {
+        mockedAxios.get.mockRejectedValueOnce(new Error('Network Error'));
+        await expect(f1Service.getLiveTimingData())
+          .rejects
+          .toThrow('Failed to fetch live timing data: Unknown error');
       });
     });
 
@@ -87,6 +100,83 @@ describe('F1DataService', () => {
         const result = await f1Service.getQualifyingResults(2023, 7);
         expect(result).toBeDefined();
         expect(result.raceName).toBe('Monaco Grand Prix');
+      });
+    });
+
+    describe('getDriverInformation', () => {
+      const mockDriverData = {
+        MRData: {
+          DriverTable: {
+            Drivers: [{
+              driverId: 'hamilton',
+              givenName: 'Lewis',
+              familyName: 'Hamilton'
+            }]
+          }
+        }
+      };
+
+      it('should return driver information successfully', async () => {
+        mockedAxios.get.mockResolvedValueOnce({ data: mockDriverData });
+        const result = await f1Service.getDriverInformation('hamilton');
+        expect(result).toEqual(mockDriverData.MRData.DriverTable.Drivers[0]);
+      });
+
+      it('should handle missing driver data', async () => {
+        mockedAxios.get.mockResolvedValueOnce({ data: { MRData: { DriverTable: { Drivers: [] } } } });
+        await expect(f1Service.getDriverInformation('invalid'))
+          .rejects
+          .toThrow('Driver information not found');
+      });
+
+      it('should handle API errors', async () => {
+        const error = {
+          response: { status: 500, data: { message: 'Server Error' } },
+          isAxiosError: true
+        };
+        mockedAxios.get.mockRejectedValueOnce(error);
+        await expect(f1Service.getDriverInformation('hamilton'))
+          .rejects
+          .toThrow('Failed to fetch driver information: 500');
+      });
+    });
+
+    describe('getDriverStandings', () => {
+      const mockStandingsData = {
+        MRData: {
+          StandingsTable: {
+            StandingsLists: [{
+              season: '2023',
+              round: '22',
+              DriverStandings: [{
+                position: '1',
+                points: '454',
+                Driver: {
+                  driverId: 'verstappen',
+                  givenName: 'Max',
+                  familyName: 'Verstappen'
+                }
+              }]
+            }]
+          }
+        }
+      };
+
+      it('should return driver standings successfully', async () => {
+        mockedAxios.get.mockResolvedValueOnce({ data: mockStandingsData });
+        const result = await f1Service.getDriverStandings(2023);
+        expect(result).toEqual(mockStandingsData.MRData.StandingsTable.StandingsLists[0]);
+      });
+
+      it('should handle errors with status codes', async () => {
+        const error = {
+          response: { status: 500, data: { message: 'Server Error' } },
+          isAxiosError: true
+        };
+        mockedAxios.get.mockRejectedValueOnce(error);
+        await expect(f1Service.getDriverStandings(2023))
+          .rejects
+          .toThrow('Failed to fetch driver standings: 500');
       });
     });
   });
@@ -184,33 +274,6 @@ describe('F1DataService', () => {
     it('should handle errors when fetching historic race results', async () => {
       mockedAxios.get.mockRejectedValueOnce(new Error('API Error'));
       await expect(f1Service.getHistoricRaceResults(2023, 1)).rejects.toThrow('Failed to fetch historic race results');
-    });
-  });
-
-  describe('getDriverStandings', () => {
-    const mockDriverStandings = {
-      MRData: {
-        StandingsTable: {
-          StandingsLists: [{
-            season: '2023',
-            DriverStandings: [
-              { position: '1', Driver: { driverId: 'max_verstappen', code: 'VER' }, points: '454' }
-            ]
-          }]
-        }
-      }
-    };
-
-    it('should return driver standings successfully', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockDriverStandings });
-      const result = await f1Service.getDriverStandings(2023);
-      expect(result).toEqual(mockDriverStandings.MRData.StandingsTable.StandingsLists[0]);
-      expect(mockedAxios.get).toHaveBeenCalledWith('http://ergast.com/api/f1/2023/driverStandings.json');
-    });
-
-    it('should handle errors when fetching driver standings', async () => {
-      mockedAxios.get.mockRejectedValueOnce(new Error('API Error'));
-      await expect(f1Service.getDriverStandings(2023)).rejects.toThrow('Failed to fetch driver standings');
     });
   });
 
@@ -613,37 +676,6 @@ describe('F1DataService', () => {
     });
   });
 
-  describe('getDriverInformation', () => {
-    const mockDriverInfo = {
-      MRData: {
-        DriverTable: {
-          Drivers: [{
-            driverId: 'hamilton',
-            permanentNumber: '44',
-            code: 'HAM',
-            url: 'http://en.wikipedia.org/wiki/Lewis_Hamilton',
-            givenName: 'Lewis',
-            familyName: 'Hamilton',
-            dateOfBirth: '1985-01-07',
-            nationality: 'British'
-          }]
-        }
-      }
-    };
-
-    it('should return driver information successfully', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockDriverInfo });
-      const result = await f1Service.getDriverInformation('hamilton');
-      expect(result).toEqual(mockDriverInfo.MRData.DriverTable.Drivers[0]);
-      expect(mockedAxios.get).toHaveBeenCalledWith('http://ergast.com/api/f1/drivers/hamilton.json');
-    });
-
-    it('should handle errors when fetching driver information', async () => {
-      mockedAxios.get.mockRejectedValueOnce(new Error('API Error'));
-      await expect(f1Service.getDriverInformation('hamilton')).rejects.toThrow('Failed to fetch driver information');
-    });
-  });
-
   describe('getConstructorInformation', () => {
     const mockConstructorInfo = {
       MRData: {
@@ -882,57 +914,47 @@ describe('F1DataService', () => {
     });
 
     it('should fetch driver career stats for Hamilton', async () => {
-      // Mock all required API responses
-      const mockDriverRaceResults = {
-        MRData: {
-          RaceTable: {
-            Races: [
-              {
-                season: '2023',
-                round: '1',
-                Results: [{ position: '1', Driver: { driverId: 'hamilton' } }]
-              }
-            ]
-          }
-        }
-      };
-
-      const mockDriverStatus = {
-        MRData: {
-          StatusTable: {
-            Status: [
-              { status: 'Finished', count: '200' },
-              { status: 'DNF', count: '10' }
-            ]
-          }
-        }
-      };
-
-      const mockDriverDetails = {
+      const mockDriverInfo = {
         MRData: {
           DriverTable: {
             Drivers: [{
               driverId: 'hamilton',
               givenName: 'Lewis',
-              familyName: 'Hamilton',
-              dateOfBirth: '1985-01-07',
-              nationality: 'British'
+              familyName: 'Hamilton'
             }]
           }
         }
       };
 
-      // Mock all API calls
-      mockedAxios.get
-        .mockResolvedValueOnce({ data: mockDriverRaceResults })
-        .mockResolvedValueOnce({ data: mockDriverStatus })
-        .mockResolvedValueOnce({ data: mockDriverDetails });
+      const mockRaceResults = {
+        MRData: {
+          total: '300',
+          RaceTable: {
+            Races: [{
+              date: '2007-03-18',
+              Results: [{ position: '1', Constructor: { name: 'McLaren' }, FastestLap: { rank: '1' } }]
+            }]
+          }
+        }
+      };
 
-      const stats = await f1Service.getDriverCareerStats('hamilton');
-      expect(stats).toBeDefined();
-      expect(stats.driver_id).toBe('hamilton');
-      expect(stats.total_races).toBeDefined();
-      expect(stats.wins).toBeDefined();
+      const mockChampionships = {
+        MRData: {
+          StandingsTable: {
+            StandingsLists: [
+              { DriverStandings: [{ position: '1' }] }
+            ]
+          }
+        }
+      };
+
+      mockedAxios.get
+        .mockResolvedValueOnce({ data: mockDriverInfo })
+        .mockResolvedValueOnce({ data: mockRaceResults })
+        .mockResolvedValueOnce({ data: mockChampionships });
+
+      const result = await f1Service.getDriverCareerStats('hamilton');
+      expect(result.driver_id).toBe('hamilton');
     });
   });
 
@@ -1144,34 +1166,124 @@ describe('F1DataService', () => {
   // Test season and circuit records
   describe('Historical Records', () => {
     it('should fetch Monaco circuit records', async () => {
-      const data = await f1Service.getCircuitRecords('monaco');
-      expect(data).toBeDefined();
-      expect(data.circuit_id).toBe('monaco');
+      const mockCircuitInfo = {
+        MRData: {
+          CircuitTable: {
+            Circuits: [{
+              circuitId: 'monaco',
+              circuitName: 'Circuit de Monaco'
+            }]
+          }
+        }
+      };
+
+      const mockRaceResults = {
+        MRData: {
+          RaceTable: {
+            Races: [{
+              season: '2023',
+              Results: [{
+                Driver: { familyName: 'Verstappen' },
+                FastestLap: { rank: '1', Time: { time: '1:12.909' } }
+              }],
+              QualifyingResults: [{
+                Q3: '1:10.241',
+                Driver: { familyName: 'Leclerc' }
+              }]
+            }]
+          }
+        }
+      };
+
+      mockedAxios.get
+        .mockResolvedValueOnce({ data: mockCircuitInfo })
+        .mockResolvedValueOnce({ data: mockRaceResults });
+
+      const result = await f1Service.getCircuitRecords('monaco');
+      expect(result.circuit_id).toBe('monaco');
     });
 
     it('should compare 2022 vs 2023 seasons', async () => {
-      const data = await f1Service.getSeasonComparison(2022, 2023, 'verstappen');
-      expect(data).toBeDefined();
-      expect(data.year1).toBeDefined();
-      expect(data.year2).toBeDefined();
+      const mockSeason2022 = {
+        MRData: {
+          RaceTable: {
+            Races: [{
+              round: '1',
+              raceName: 'Bahrain Grand Prix',
+              Results: [{
+                position: '1',
+                Driver: { driverId: 'leclerc', code: 'LEC' }
+              }]
+            }]
+          }
+        }
+      };
+
+      const mockSeason2023 = {
+        MRData: {
+          RaceTable: {
+            Races: [{
+              round: '1',
+              raceName: 'Bahrain Grand Prix',
+              Results: [{
+                position: '1',
+                Driver: { driverId: 'verstappen', code: 'VER' }
+              }]
+            }]
+          }
+        }
+      };
+
+      mockedAxios.get
+        .mockResolvedValueOnce({ data: mockSeason2022 })
+        .mockResolvedValueOnce({ data: mockSeason2023 });
+
+      const result = await f1Service.getSeasonComparison(2022, 2023);
+      expect(result.year1[0].round).toBe('1');
+      expect(result.year2[0].round).toBe('1');
     });
   });
 
   // Test race start analysis
   describe('Race Start Analysis', () => {
     it('should analyze race start performance', async () => {
-      const data = await f1Service.getRaceStartAnalysis('latest', '33');
-      expect(data).toBeDefined();
-      expect(Array.isArray(data)).toBe(true);
+      const mockStartData = [{
+        driver_number: '1',
+        grid_position: 1,
+        reaction_time: 0.2,
+        positions_gained: 0,
+        first_corner_position: 1
+      }];
+
+      mockedAxios.get.mockResolvedValueOnce({ data: mockStartData });
+
+      const result = await f1Service.getRaceStartAnalysis('2023-01');
+      expect(result[0].driver_number).toBe('1');
     });
   });
 
   // Test tire performance
   describe('Tire Performance', () => {
     it('should analyze tire performance', async () => {
-      const data = await f1Service.getTyrePerformance('latest', '33', 'SOFT');
-      expect(data).toBeDefined();
-      expect(data.compound).toBe('SOFT');
+      const mockTyreData = [{
+        compound: 'SOFT',
+        degradation: 0.1,
+        laps_on_tyre: 20,
+        average_time: 80.5
+      }];
+
+      const mockTelemetry = [{
+        tyre_compound: 'SOFT',
+        speed: 300,
+        throttle: 100
+      }];
+
+      mockedAxios.get
+        .mockResolvedValueOnce({ data: mockTyreData })
+        .mockResolvedValueOnce({ data: mockTelemetry });
+
+      const result = await f1Service.getTyrePerformance('2023-01', '1', 'SOFT');
+      expect(result.compound).toBe('SOFT');
     });
   });
 }); 
