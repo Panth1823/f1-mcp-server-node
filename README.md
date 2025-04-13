@@ -44,6 +44,38 @@ cp .env.example .env
 # Edit .env with your configuration
 ```
 
+### Cursor Integration
+
+To use this F1 MCP server in Cursor, add the following configuration to your `.cursor/mcp.json` file:
+
+```json
+{
+    "f1-mcp-server": {
+        "command": "uvx",
+        "args": [
+            "--from",
+            "git+https://github.com/Panth1823/f1-mcp-server-node.git",
+            "f1-mcp-server"
+        ],
+        "enabled": true
+    }
+}
+```
+
+After adding the configuration:
+1. Restart Cursor to load the MCP server
+2. The F1 data endpoints will be available through Cursor's MCP interface
+3. You can now access real-time and historical F1 data directly in your development environment
+
+Example usage in Cursor:
+- Get live timing data during race sessions
+- Access historical race results
+- View driver standings
+- Check weather conditions
+- Monitor team radio communications
+- Track pit stop data
+- Access telemetry information
+
 ### Usage
 
 1. Development mode:
