@@ -5,7 +5,9 @@
   "main": "test-mcp-server.js",
   "type": "module",
   "scripts": {
-    "test": "node test-mcp-server.js"
+    "test": "node test-mcp-server.js",
+    "test:all": "node run-all-tests.js",
+    "test:advanced": "node test-advanced-params.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.9.0"

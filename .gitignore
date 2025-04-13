@@ -1,8 +1,15 @@
 # Node.js
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build output
 build/
 dist/
-*.log
+out/
 
 # IDE
 .idea/
@@ -10,12 +17,17 @@ dist/
 *.swp
 *.swo
 .DS_Store
+*.sublime-*
+*.code-workspace
 
 # Environment variables
 .env
 .env.local
 .env.*.local
+.env.development
+.env.test
 .env.production
+.env.staging
 
 # FastF1 Cache
 fastf1_cache/
@@ -23,11 +35,26 @@ fastf1_cache/
 # Logs
 logs/
 log/
+*.log
+debug.log
+npm-debug.log*
 
 # Docker
 .docker/
 docker-compose.override.yml
+docker-compose.*.yml
 
-# Build output
-build/
-dist/ 
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+.temp/
+*.tmp
+
+# Scripts generated files
+scripts/**/*.log
+scripts/**/node_modules/
+scripts/**/package-lock.json 
