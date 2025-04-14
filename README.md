@@ -1,10 +1,9 @@
-# Start Your Engines: The F1 MCP Server Node Implementation! 🏎️💨
+# The Formula1 MCP Server ! 🏎️💨
 
-A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and historical F1 racing data straight to your fingertips via the Model Context Protocol. Faster than Verstappen on a hot lap! (Okay, maybe not *that* fast, but it's trying!)
-
-## Features
+A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and historical F1 racing data straight to your fingertips via the Model Context Protocol. Faster than Verstappen on a hot lap! (Okay, maybe not _that_ fast, but it's trying!)
 
 ### Resources
+
 - Access F1 session data via standardized URIs
 - Real-time telemetry data
 - Historical race information
@@ -13,6 +12,7 @@ A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and hi
 - Circuit information
 
 ### Functions
+
 - `getLiveTimingData` - Get live timing data for the current session.
 - `getCurrentSessionStatus` - Get the status of the current or most recent session.
 - `getDriverInfo` - Get information about a specific driver.
@@ -37,12 +37,14 @@ A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and hi
 ## Getting Started (Lights Out and Away We Go!)
 
 1.  **Get the Code:**
+
     ```bash
     git clone https://github.com/Panth1823/formula1-mcp
     cd formula1-mcp # Navigate into the cloned directory
     ```
 
 2.  **Install Dependencies:**
+
     ```bash
     npm install
     ```
@@ -58,9 +60,9 @@ A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and hi
 
 Once built, tell your MCP client where to find the server. Add the following configuration to the appropriate JSON file for your client:
 
-*   **Cursor:** `%APPDATA%\.cursor\mcp.json` (Windows), `~/.cursor/mcp.json` (MacOS), `~/.config/.cursor/mcp.json` (Linux)
-*   **Claude Desktop:** `%APPDATA%\Claude\claude_desktop_config.json` (Windows), `~/Library/Application Support/Claude/claude_desktop_config.json` (MacOS)
-*   *(Other clients might have different paths)*
+- **Cursor:** `%APPDATA%\.cursor\mcp.json` (Windows), `~/.cursor/mcp.json` (MacOS), `~/.config/.cursor/mcp.json` (Linux)
+- **Claude Desktop:** `%APPDATA%\Claude\claude_desktop_config.json` (Windows), `~/Library/Application Support/Claude/claude_desktop_config.json` (MacOS)
+- _(Other clients might have different paths)_
 
 **Configuration Example:**
 
@@ -78,7 +80,24 @@ Once built, tell your MCP client where to find the server. Add the following con
   }
 }
 ```
-*Double-check those paths! An incorrect path is like a pit stop error – it'll cost you time.*
+
+_Double-check those paths! An incorrect path is like a pit stop error – it'll cost you time._
+
+## Example Prompts (Start Your Engines!)
+
+Here are a few examples of how you might interact with the Formula 1 MCP server in a compatible client (like Cursor or Claude Desktop):
+
+*   "Show me the race results for the 2023 Monaco Grand Prix." (Uses `getHistoricalSessions` then `getHistoricRaceResults`)
+*   "Get the driver standings for the 1998 F1 season." (Uses `getDriverStandings`)
+*   "What was the constructor championship table in 2010?" (Uses `getConstructorStandings`)
+*   "Tell me about the Silverstone circuit." (Uses `getCircuitInfo`)
+*   "Fetch Lewis Hamilton's lap times from the 2021 Brazilian Grand Prix." (Uses `getHistoricalSessions` then `getLapTimes`)
+*   "Show the race calendar for 2024." (Uses `getRaceCalendar`)
+*   "Get information about the driver Max Verstappen." (Uses `getDriverInformation` or `getDriverInfo`)
+*   "What were the qualifying results for the 2022 Japanese GP?" (Uses `getHistoricalSessions` then `getQualifyingResults`)
+*   "List the available F1 seasons." (Uses `getSeasonList`)
+
+_(Remember to replace specific years, circuits, drivers, or rounds with your actual query!)_
 
 ## Debugging (Box, Box, Box!)
 
@@ -92,10 +111,7 @@ The Inspector will provide a URL to access debugging tools in your browser.
 
 Contributions are welcome! Whether it's adding new data sources, optimizing performance, fixing bugs, or improving documentation, your help is appreciated.
 
-*   **Found a bug?** Report it in the [Issues](https://github.com/Panth1823/formula1-mcp/issues).
-*   **Have an idea?** Open an issue to discuss it.
-*   **Ready to code?** Fork the repo and submit a Pull Request!
+- **Found a bug?** Report it in the [Issues](https://github.com/Panth1823/formula1-mcp/issues).
+- **Have an idea?** Open an issue to discuss it.
+- **Ready to code?** Fork the repo and submit a Pull Request!
 
-Let's make this the best F1 MCP server out there!
-
-*(Why did the F1 car break up with the mechanic? It felt they were drifting apart! 😉)*
