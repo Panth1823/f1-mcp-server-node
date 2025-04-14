@@ -204,7 +204,7 @@ server.tool('clearCache', {}, async () => {
   };
 });
 
-console.log('Starting F1 MCP Server...');
+console.error('Starting F1 MCP Server...');
 const transport = new StdioServerTransport();
 (async () => {
   await server.connect(transport);
