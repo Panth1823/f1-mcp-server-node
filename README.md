@@ -34,6 +34,166 @@ A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and hi
 - `getConstructorInformation` - Get detailed information about a specific constructor (from Ergast).
 - `clearCache` - Clear the local cache for F1 data.
 
+### API Reference
+
+Here's a detailed breakdown of each available function and its parameters:
+
+#### `getLiveTimingData`
+
+Get real-time timing data for the current session.
+
+- No parameters required
+
+#### `getCurrentSessionStatus`
+
+Get status information about the current or most recent session.
+
+- No parameters required
+
+#### `getDriverInfo`
+
+Get information about a specific driver.
+
+- Parameters:
+  - `driverId` (string): Driver identifier (e.g., "max_verstappen", "lewis_hamilton")
+
+#### `getHistoricalSessions`
+
+Find session keys for historical events based on filters.
+
+- Parameters:
+  - `year` (number, optional): Season year (e.g., 2023)
+  - `circuit_short_name` (string, optional): Short circuit name (e.g., "monza", "spa")
+  - `country_name` (string, optional): Country name (e.g., "Italy", "Belgium")
+  - `location` (string, optional): Location name
+  - `session_name` (string, optional): Session name (e.g., "Race", "Qualifying")
+
+#### `getHistoricRaceResults`
+
+Get race results for a specific historical race.
+
+- Parameters:
+  - `year` (number): Season year (e.g., 2023)
+  - `round` (number): Round number (e.g., 1, 2, 3)
+
+#### `getDriverStandings`
+
+Get driver championship standings for a specific year.
+
+- Parameters:
+  - `year` (number): Season year (e.g., 2023)
+
+#### `getConstructorStandings`
+
+Get constructor championship standings for a specific year.
+
+- Parameters:
+  - `year` (number): Season year (e.g., 2023)
+
+#### `getLapTimes`
+
+Get lap times for a specific driver in a race.
+
+- Parameters:
+  - `year` (number): Season year (e.g., 2023)
+  - `round` (number): Round number (e.g., 1, 2, 3)
+  - `driverId` (string): Driver identifier (e.g., "max_verstappen", "lewis_hamilton")
+
+#### `getWeatherData`
+
+Get weather data for a session.
+
+- Parameters:
+  - `sessionKey` (string, optional): Session identifier (defaults to live session if not provided)
+
+#### `getCarData`
+
+Get detailed car telemetry data.
+
+- Parameters:
+  - `driverNumber` (string): Driver's car number (e.g., "44", "33")
+  - `sessionKey` (string, optional): Session identifier
+  - `filters` (string, optional): Data filters
+
+#### `getPitStopData`
+
+Get pit stop information.
+
+- Parameters:
+  - `driverNumber` (string, optional): Driver's car number
+  - `sessionKey` (string, optional): Session identifier
+
+#### `getTeamRadio`
+
+Get team radio communications.
+
+- Parameters:
+  - `driverNumber` (string, optional): Driver's car number
+  - `sessionKey` (string, optional): Session identifier
+
+#### `getRaceControlMessages`
+
+Get race control messages for a session.
+
+- Parameters:
+  - `sessionKey` (string, optional): Session identifier
+
+#### `getRaceCalendar`
+
+Get the Formula 1 race calendar for a specific year.
+
+- Parameters:
+  - `year` (number): Season year (e.g., 2023)
+
+#### `getCircuitInfo`
+
+Get detailed information about a specific circuit.
+
+- Parameters:
+  - `circuitId` (string): Circuit identifier (e.g., "monza", "spa")
+
+#### `getSeasonList`
+
+Get a list of available Formula 1 seasons.
+
+- Parameters:
+  - `limit` (number, optional): Number of seasons to return
+
+#### `getQualifyingResults`
+
+Get qualifying results for a specific race.
+
+- Parameters:
+  - `year` (number): Season year (e.g., 2023)
+  - `round` (number): Round number (e.g., 1, 2, 3)
+
+#### `getDriverInformation`
+
+Get detailed driver information from Ergast API.
+
+- Parameters:
+  - `driverId` (string): Driver identifier (e.g., "max_verstappen", "lewis_hamilton")
+
+#### `getConstructorInformation`
+
+Get detailed constructor information from Ergast API.
+
+- Parameters:
+  - `constructorId` (string): Constructor identifier (e.g., "red_bull", "mercedes")
+
+#### `clearCache`
+
+Clear the local cache for F1 data.
+
+- No parameters required
+
+### API Sources
+
+The functions above utilize different Formula 1 data sources:
+
+- **Official F1 Live Timing API (OpenF1)**: Used for all real-time data
+- **Ergest API (FastF1)**: Used for historical data
+
 ## Getting Started (Lights Out and Away We Go!)
 
 1.  **Get the Code:**
@@ -87,15 +247,15 @@ _Double-check those paths! An incorrect path is like a pit stop error – it'll 
 
 Here are a few examples of how you might interact with the Formula 1 MCP server in a compatible client (like Cursor or Claude Desktop):
 
-*   "Show me the race results for the 2023 Monaco Grand Prix." (Uses `getHistoricalSessions` then `getHistoricRaceResults`)
-*   "Get the driver standings for the 1998 F1 season." (Uses `getDriverStandings`)
-*   "What was the constructor championship table in 2010?" (Uses `getConstructorStandings`)
-*   "Tell me about the Silverstone circuit." (Uses `getCircuitInfo`)
-*   "Fetch Lewis Hamilton's lap times from the 2021 Brazilian Grand Prix." (Uses `getHistoricalSessions` then `getLapTimes`)
-*   "Show the race calendar for 2024." (Uses `getRaceCalendar`)
-*   "Get information about the driver Max Verstappen." (Uses `getDriverInformation` or `getDriverInfo`)
-*   "What were the qualifying results for the 2022 Japanese GP?" (Uses `getHistoricalSessions` then `getQualifyingResults`)
-*   "List the available F1 seasons." (Uses `getSeasonList`)
+- "Show me the race results for the 2023 Monaco Grand Prix." (Uses `getHistoricalSessions` then `getHistoricRaceResults`)
+- "Get the driver standings for the 1998 F1 season." (Uses `getDriverStandings`)
+- "What was the constructor championship table in 2010?" (Uses `getConstructorStandings`)
+- "Tell me about the Silverstone circuit." (Uses `getCircuitInfo`)
+- "Fetch Lewis Hamilton's lap times from the 2021 Brazilian Grand Prix." (Uses `getHistoricalSessions` then `getLapTimes`)
+- "Show the race calendar for 2024." (Uses `getRaceCalendar`)
+- "Get information about the driver Max Verstappen." (Uses `getDriverInformation` or `getDriverInfo`)
+- "What were the qualifying results for the 2022 Japanese GP?" (Uses `getHistoricalSessions` then `getQualifyingResults`)
+- "List the available F1 seasons." (Uses `getSeasonList`)
 
 _(Remember to replace specific years, circuits, drivers, or rounds with your actual query!)_
 
@@ -114,4 +274,3 @@ Contributions are welcome! Whether it's adding new data sources, optimizing perf
 - **Found a bug?** Report it in the [Issues](https://github.com/Panth1823/formula1-mcp/issues).
 - **Have an idea?** Open an issue to discuss it.
 - **Ready to code?** Fork the repo and submit a Pull Request!
-
