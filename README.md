@@ -1,6 +1,6 @@
-# F1 MCP Server Node Implementation
+# Start Your Engines: The F1 MCP Server Node Implementation! 🏎️💨
 
-A TypeScript-based Formula 1 MCP server that provides real-time and historical F1 racing data through the Model Context Protocol.
+A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and historical F1 racing data straight to your fingertips via the Model Context Protocol. Faster than Verstappen on a hot lap! (Okay, maybe not *that* fast, but it's trying!)
 
 ## Features
 
@@ -34,68 +34,68 @@ A TypeScript-based Formula 1 MCP server that provides real-time and historical F
 - `getConstructorInformation` - Get detailed information about a specific constructor (from Ergast).
 - `clearCache` - Clear the local cache for F1 data.
 
-## Getting Started
+## Getting Started (Lights Out and Away We Go!)
 
-1.  **Clone the repository:**
+1.  **Get the Code:**
     ```bash
-    git clone https://github.com/Panth1823/formula1-mcp 
-    cd f1-mcp-server 
+    git clone https://github.com/Panth1823/formula1-mcp
+    cd formula1-mcp # Navigate into the cloned directory
     ```
 
-2.  **Install dependencies:**
+2.  **Install Dependencies:**
     ```bash
     npm install
     ```
 
-3.  **Build the server:**
+3.  **Build the Server:**
     ```bash
     npm run build
     ```
-    *After these steps, the server is ready to be configured in your MCP client.*
 
-## Development
+🏁 **Checkered Flag!** The server is built and ready to be configured in your MCP client.
 
-For development with auto-reload (compiles and restarts the server on file changes):
-```bash
-npm run dev
-```
+## Installation & Configuration
 
-## Installation
+Once built, tell your MCP client where to find the server. Add the following configuration to the appropriate JSON file for your client:
 
-After building the server (see Getting Started), you need to configure your MCP client to use it. Add the following configuration to the appropriate JSON file:
+*   **Cursor:** `%APPDATA%\.cursor\mcp.json` (Windows), `~/.cursor/mcp.json` (MacOS), `~/.config/.cursor/mcp.json` (Linux)
+*   **Claude Desktop:** `%APPDATA%\Claude\claude_desktop_config.json` (Windows), `~/Library/Application Support/Claude/claude_desktop_config.json` (MacOS)
+*   *(Other clients might have different paths)*
 
-### Cursor
-Add the following to your `mcp.json` file:
-- **Windows:** `%APPDATA%\.cursor\mcp.json`
-- **MacOS:** `~/.cursor/mcp.json`
-- **Linux:** `~/.config/.cursor/mcp.json`
+**Configuration Example:**
 
-### Claude Desktop
-Add the following to your `claude_desktop_config.json` file:
-- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
-- **MacOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-
-### Configuration Example
-*(Remember to replace `<path-to-your-cloned-repo>` with the actual absolute path where you cloned the repository)*
 ```json
 {
   "mcpServers": {
     "formula1": {
       "command": "node",
-      // Ensure this path points to the built index.js in your cloned repo
-      "args": ["<path-to-your-cloned-repo>/build/index.js"], 
-      // Ensure this path points to the root of your cloned repo
+      // ⚠️ IMPORTANT: Replace <path-to-your-cloned-repo> with the *absolute* path!
+      "args": ["<path-to-your-cloned-repo>/build/index.js"],
+      // ⚠️ IMPORTANT: Ensure this points to the root of *your* cloned repo
       "cwd": "<path-to-your-cloned-repo>",
-      "enabled": true
+      "enabled": true // Set to true to activate!
     }
   }
 }
 ```
+*Double-check those paths! An incorrect path is like a pit stop error – it'll cost you time.*
 
-### Debugging
+## Debugging (Box, Box, Box!)
 
 Since MCP servers communicate over stdio, debugging can be challenging. We recommend using the [MCP Inspector](https://github.com/modelcontextprotocol/inspector):
 
 Follow the instructions in the MCP Inspector repository to set it up.
 
 The Inspector will provide a URL to access debugging tools in your browser.
+
+## Contributing (Join the Pit Crew!)
+
+Contributions are welcome! Whether it's adding new data sources, optimizing performance, fixing bugs, or improving documentation, your help is appreciated.
+
+*   **Found a bug?** Report it in the [Issues](https://github.com/Panth1823/formula1-mcp/issues).
+*   **Have an idea?** Open an issue to discuss it.
+*   **Ready to code?** Fork the repo and submit a Pull Request!
+
+Let's make this the best F1 MCP server out there!
+
+*(Why did the F1 car break up with the mechanic? It felt they were drifting apart! 😉)*

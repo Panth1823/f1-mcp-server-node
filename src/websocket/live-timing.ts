@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { McpError, ErrorCode } from '@modelcontextprotocol/sdk';
+import axios from "axios";
+import { McpError, ErrorCode } from "@modelcontextprotocol/sdk";
 
 export class F1DataService {
   private static instance: F1DataService;
@@ -28,13 +28,13 @@ export class F1DataService {
   }
 
   private async fetchWithErrorHandling<T>(
-    url: string, 
-    errorMessage: string, 
+    url: string,
+    errorMessage: string,
     useCache: boolean = true,
     cacheTTL?: number
   ): Promise<T> {
     const cacheKey = url;
-    
+
     if (useCache) {
       const cachedData = this.getCachedData<T>(cacheKey);
       if (cachedData) {
@@ -44,17 +44,17 @@ export class F1DataService {
 
     try {
       const response = await axios.get<T>(url);
-      
+
       if (useCache) {
         this.setCachedData(cacheKey, response.data, cacheTTL);
       }
-      
+
       return response.data;
     } catch (error: any) {
       console.error(`${errorMessage}:`, error);
       throw new McpError(
         ErrorCode.InternalError,
-        `${errorMessage}: ${error.response?.status || 'Unknown error'}`
+        `${errorMessage}: ${error.response?.status || "Unknown error"}`
       );
     }
   }

@@ -1,4 +1,4 @@
-declare module '@modelcontextprotocol/sdk' {
+declare module "@modelcontextprotocol/sdk" {
   export interface Request {
     id?: number;
     method?: string;
@@ -30,7 +30,7 @@ declare module '@modelcontextprotocol/sdk' {
     InvalidRequest = -32600,
     MethodNotFound = -32601,
     InvalidParams = -32602,
-    InternalError = -32603
+    InternalError = -32603,
   }
 
   export interface ServerOptions {
@@ -38,15 +38,22 @@ declare module '@modelcontextprotocol/sdk' {
     version: string;
   }
 
-  export class Server<TRequest = Request, TNotification = Notification, TResult = Result> {
+  export class Server<
+    TRequest = Request,
+    TNotification = Notification,
+    TResult = Result
+  > {
     constructor(options: ServerOptions);
     tools: {
-      register(name: string, tool: {
-        description: string;
-        inputSchema: any;
-        outputSchema?: any;
-        handler: (params: any) => Promise<any>;
-      }): void;
+      register(
+        name: string,
+        tool: {
+          description: string;
+          inputSchema: any;
+          outputSchema?: any;
+          handler: (params: any) => Promise<any>;
+        }
+      ): void;
     };
     listen(transport: any): Promise<void>;
   }

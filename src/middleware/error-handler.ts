@@ -1,10 +1,17 @@
 import { McpError, ErrorCode, Request } from "@modelcontextprotocol/sdk";
 
-export const errorHandlerMiddleware = async (request: Request, next: () => Promise<any>) => {
+export const errorHandlerMiddleware = async (
+  request: Request,
+  next: () => Promise<any>
+) => {
   try {
     return await next();
   } catch (error) {
-    console.error(`Error handling request: ${error instanceof Error ? error.message : String(error)}`);
+    console.error(
+      `Error handling request: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
 
     // If it's already an MCP error, just rethrow it
     if (error instanceof McpError) {
@@ -29,7 +36,9 @@ export const errorHandlerMiddleware = async (request: Request, next: () => Promi
     // For unknown errors, return a generic internal error
     throw new McpError(
       ErrorCode.InternalError,
-      `An unexpected error occurred: ${error instanceof Error ? error.message : String(error)}`
+      `An unexpected error occurred: ${
+        error instanceof Error ? error.message : String(error)
+      }`
     );
   }
-}; 
+};

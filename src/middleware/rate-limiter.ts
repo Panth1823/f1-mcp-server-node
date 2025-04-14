@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 
 export interface McpRequest {
   id?: string | number;
@@ -19,7 +19,7 @@ let cleanupInterval: NodeJS.Timeout | null = null;
 
 const startCleanupInterval = () => {
   if (cleanupInterval) return; // Don't create multiple intervals
-  
+
   cleanupInterval = setInterval(() => {
     const now = Date.now();
     for (const [clientId, entry] of rateLimits.entries()) {
@@ -43,11 +43,15 @@ export const clearInterval = () => {
 // Start the cleanup interval when the module is loaded
 startCleanupInterval();
 
-export const rateLimiter = (req: Request, res: Response, next: NextFunction) => {
-  const clientId = req.headers['x-client-id'] as string;
+export const rateLimiter = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const clientId = req.headers["x-client-id"] as string;
   if (!clientId) {
-    console.error('No client ID provided');
-    return res.status(400).json({ error: 'Client ID is required' });
+    console.error("No client ID provided");
+    return res.status(400).json({ error: "Client ID is required" });
   }
 
   const now = Date.now();
@@ -66,9 +70,9 @@ export const rateLimiter = (req: Request, res: Response, next: NextFunction) => 
 
     if (entry.count > MAX_REQUESTS_PER_MINUTE) {
       console.error(`Rate limit exceeded for client ${clientId}`);
-      return res.status(429).json({ error: 'Rate limit exceeded' });
+      return res.status(429).json({ error: "Rate limit exceeded" });
     }
   }
 
   next();
-}; 
+};

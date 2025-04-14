@@ -6,8 +6,8 @@ interface CacheEntry {
 }
 
 interface CacheConfig {
-  ttl?: number;        // Time to live in seconds
-  keyPrefix?: string;  // Prefix for cache keys
+  ttl?: number; // Time to live in seconds
+  keyPrefix?: string; // Prefix for cache keys
 }
 
 class Cache {
@@ -18,7 +18,7 @@ class Cache {
   constructor(config: CacheConfig = {}) {
     this.store = new Map();
     this.defaultTTL = config.ttl || 300; // Default 5 minutes
-    this.keyPrefix = config.keyPrefix || 'mcp:';
+    this.keyPrefix = config.keyPrefix || "mcp:";
   }
 
   private generateKey(key: string): string {
@@ -29,7 +29,7 @@ class Cache {
     const cacheKey = this.generateKey(key);
     this.store.set(cacheKey, {
       data: value,
-      timestamp: Date.now() + (ttl || this.defaultTTL) * 1000
+      timestamp: Date.now() + (ttl || this.defaultTTL) * 1000,
     });
   }
 
@@ -72,7 +72,7 @@ setInterval(() => cache.cleanup(), 60000);
 export const cacheMiddleware = (config: CacheConfig = {}) => {
   return async (request: Request, next: () => Promise<any>) => {
     // Only cache GET requests
-    if (request.method?.toLowerCase() !== 'get') {
+    if (request.method?.toLowerCase() !== "get") {
       return next();
     }
 
@@ -95,4 +95,4 @@ export const cacheMiddleware = (config: CacheConfig = {}) => {
 
     return result;
   };
-}; 
+};
