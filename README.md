@@ -1,134 +1,168 @@
-# The Formula1 MCP Server 🏎️
+# The Formula1 MCP Server ! 🏎️💨
 
-Get F1 data instantly through MCP. Live timing, historical stats, and more - all in one place.
+A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and historical F1 racing data straight to your fingertips via the Model Context Protocol. Faster than Verstappen on a hot lap! (Okay, maybe not _that_ fast, but it's trying!)
 
 ### Resources
 
-- F1 session data
-- Real-time telemetry
-- Historical races
-- Standings
+- Access F1 session data via standardized URIs
+- Real-time telemetry data
+- Historical race information
+- Driver and constructor standings
 - Weather data
-- Circuit info
+- Circuit information
 
-### Tools
+## Available Tools
 
-- `getLiveTimingData` - Live session timing
-- `getCurrentSessionStatus` - Session status
-- `getDriverInfo` - Driver info
-- `getHistoricalSessions` - Find past sessions
-- `getHistoricRaceResults` - Past race results
-- `getDriverStandings` - Driver standings
-- `getConstructorStandings` - Team standings
-- `getLapTimes` - Lap times
-- `getWeatherData` - Track weather
-- `getCarData` - Car telemetry
-- `getPitStopData` - Pit stops
-- `getTeamRadio` - Team radio
-- `getRaceControlMessages` - Race control
-- `getRaceCalendar` - Season calendar
-- `getCircuitInfo` - Circuit details
-- `getSeasonList` - Available seasons
-- `getQualifyingResults` - Qualifying results
-- `getDriverInformation` - Driver details (Ergast)
-- `getConstructorInformation` - Team details (Ergast)
-- `clearCache` - Clear cache
+### 1. `getLiveTimingData`
 
-### API Reference
+Get real-time timing data for the current session.
 
-Here's what each function does:
+**Parameters:**
+- None required
 
-#### `getLiveTimingData`
-Get live timing data
-- No parameters
+### 2. `getCurrentSessionStatus`
 
-#### `getCurrentSessionStatus`
-Get session status
-- No parameters
+Get status information about the current session.
 
-#### `getDriverInfo`
-Get driver info
-- `driverId`: Driver ID (e.g., "max_verstappen")
+**Parameters:**
+- None required
 
-#### `getHistoricalSessions`
-Find past sessions
-- `year`: Season year (optional)
-- `circuit_short_name`: Circuit (optional)
-- `country_name`: Country (optional)
-- `location`: Location (optional)
-- `session_name`: Session type (optional)
+### 3. `getDriverInfo`
 
-#### `getHistoricRaceResults`
-Get race results
-- `year`: Season year
-- `round`: Race number
+Get information about a specific driver.
 
-#### `getDriverStandings`
-Get championship standings
-- `year`: Season year
+**Parameters:**
+- `driverId` (string): Driver identifier (e.g., "max_verstappen", "lewis_hamilton")
 
-#### `getConstructorStandings`
-Get team standings
-- `year`: Season year
+### 4. `getHistoricalSessions`
 
-#### `getLapTimes`
-Get lap times
-- `year`: Season year
-- `round`: Race number
-- `driverId`: Driver ID
+Find session keys for historical events.
 
-#### `getWeatherData`
-Get weather data
-- `sessionKey`: Session ID (optional)
+**Parameters:**
+- `year` (number, optional): Season year (e.g., 2023)
+- `circuit_short_name` (string, optional): Circuit name (e.g., "monza", "spa")
+- `country_name` (string, optional): Country name (e.g., "Italy", "Belgium")
+- `session_name` (string, optional): Session type (e.g., "Race", "Qualifying")
 
-#### `getCarData`
-Get telemetry data
-- `driverNumber`: Car number
-- `sessionKey`: Session ID (optional)
-- `filters`: Data filters (optional)
+### 5. `getHistoricRaceResults`
 
-#### `getPitStopData`
-Get pit stop info
-- `driverNumber`: Car number (optional)
-- `sessionKey`: Session ID (optional)
+Get race results for a specific historical race.
 
-#### `getTeamRadio`
-Get team radio
-- `driverNumber`: Car number (optional)
-- `sessionKey`: Session ID (optional)
+**Parameters:**
+- `year` (number): Season year (e.g., 2023)
+- `round` (number): Race number (e.g., 1, 2, 3)
 
-#### `getRaceControlMessages`
-Get race control messages
-- `sessionKey`: Session ID (optional)
+### 6. `getDriverStandings`
 
-#### `getRaceCalendar`
-Get season calendar
-- `year`: Season year
+Get driver championship standings.
 
-#### `getCircuitInfo`
-Get circuit info
-- `circuitId`: Circuit ID
+**Parameters:**
+- `year` (number): Season year (e.g., 2023)
 
-#### `getSeasonList`
-Get available seasons
-- `limit`: Number of seasons (optional)
+### 7. `getConstructorStandings`
 
-#### `getQualifyingResults`
-Get qualifying results
-- `year`: Season year
-- `round`: Race number
+Get constructor championship standings.
 
-#### `getDriverInformation`
-Get driver details
-- `driverId`: Driver ID
+**Parameters:**
+- `year` (number): Season year (e.g., 2023)
 
-#### `getConstructorInformation`
-Get team details
-- `constructorId`: Team ID
+### 8. `getLapTimes`
 
-#### `clearCache`
-Clear data cache
-- No parameters
+Get lap times for a specific driver.
+
+**Parameters:**
+- `year` (number): Season year (e.g., 2023)
+- `round` (number): Race number (e.g., 1, 2, 3)
+- `driverId` (string): Driver identifier (e.g., "max_verstappen", "lewis_hamilton")
+
+### 9. `getWeatherData`
+
+Get weather data for a session.
+
+**Parameters:**
+- `sessionKey` (string, optional): Session identifier
+
+### 10. `getCarData`
+
+Get detailed car telemetry data.
+
+**Parameters:**
+- `driverNumber` (string): Driver's car number (e.g., "44", "33")
+- `sessionKey` (string, optional): Session identifier
+- `filters` (string, optional): Data filters
+
+### 11. `getPitStopData`
+
+Get pit stop information.
+
+**Parameters:**
+- `driverNumber` (string, optional): Driver's car number
+- `sessionKey` (string, optional): Session identifier
+
+### 12. `getTeamRadio`
+
+Get team radio communications.
+
+**Parameters:**
+- `driverNumber` (string, optional): Driver's car number
+- `sessionKey` (string, optional): Session identifier
+
+### 13. `getRaceControlMessages`
+
+Get race control messages.
+
+**Parameters:**
+- `sessionKey` (string, optional): Session identifier
+
+### 14. `getRaceCalendar`
+
+Get the F1 race calendar.
+
+**Parameters:**
+- `year` (number): Season year (e.g., 2023)
+
+### 15. `getCircuitInfo`
+
+Get detailed circuit information.
+
+**Parameters:**
+- `circuitId` (string): Circuit identifier (e.g., "monza", "spa")
+
+### 16. `getSeasonList`
+
+Get a list of available F1 seasons.
+
+**Parameters:**
+- `limit` (number, optional): Number of seasons to return
+
+### 17. `getQualifyingResults`
+
+Get qualifying session results.
+
+**Parameters:**
+- `year` (number): Season year (e.g., 2023)
+- `round` (number): Race number (e.g., 1, 2, 3)
+
+### 18. `getDriverInformation`
+
+Get detailed driver information from Ergast API.
+
+**Parameters:**
+- `driverId` (string): Driver identifier (e.g., "max_verstappen", "lewis_hamilton")
+
+### 19. `getConstructorInformation`
+
+Get detailed constructor information from Ergast API.
+
+**Parameters:**
+- `constructorId` (string): Constructor identifier (e.g., "red_bull", "mercedes")
+
+### 20. `clearCache`
+
+Clear the local cache for F1 data.
+
+**Parameters:**
+- None required
 
 ### Data Sources
 
