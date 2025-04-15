@@ -2,8 +2,6 @@
 
 # The Formula1 MCP Server ! 🏎️💨
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and historical F1 racing data straight to your fingertips via the Model Context Protocol. Faster than Verstappen on a hot lap! (Okay, maybe not _that_ fast, but it's trying!)
 
 ### Resources
