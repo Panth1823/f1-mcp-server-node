@@ -1,3 +1,5 @@
+[![smithery badge](https://smithery.ai/badge/@Panth1823/formula1-mcp)](https://smithery.ai/server/@Panth1823/formula1-mcp)
+
 # The Formula1 MCP Server ! 🏎️💨
 
 A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and historical F1 racing data straight to your fingertips via the Model Context Protocol. Faster than Verstappen on a hot lap! (Okay, maybe not _that_ fast, but it's trying!)
