@@ -1,3 +1,5 @@
+[![smithery badge](https://smithery.ai/badge/@Panth1823/formula1-mcp)](https://smithery.ai/server/@Panth1823/formula1-mcp)
+
 # The Formula1 MCP Server ! 🏎️💨
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
