@@ -1,5 +1,7 @@
 # The Formula1 MCP Server ! 🏎️💨
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and historical F1 racing data straight to your fingertips via the Model Context Protocol. Faster than Verstappen on a hot lap! (Okay, maybe not _that_ fast, but it's trying!)
 
 ### Resources
@@ -10,6 +12,56 @@ A TypeScript-based Formula 1 MCP server, bringing the thrill of real-time and hi
 - Driver and constructor standings
 - Weather data
 - Circuit information
+
+## Getting Started
+
+### Quick Install via Smithery
+
+To install the Formula 1 MCP Server automatically via Smithery:
+
+```bash
+npx -y @smithery/cli install @Panth1823/formula1-mcp --client claude
+```
+
+### Manual Installation
+
+1. Clone the repo:
+```bash
+git clone https://github.com/Panth1823/formula1-mcp
+cd formula1-mcp
+```
+
+2. Install:
+```bash
+npm install
+```
+
+3. Build:
+```bash
+npm run build
+```
+
+## Setup
+
+Add to your MCP client config:
+
+```json
+{
+  "mcpServers": {
+    "formula1": {
+      "command": "node",
+      "args": ["<path-to-your-cloned-repo>/build/index.js"],
+      "cwd": "<path-to-your-cloned-repo>",
+      "enabled": true
+    }
+  }
+}
+```
+
+Config locations:
+- Windows: `%APPDATA%\.cursor\mcp.json`
+- MacOS: `~/.cursor/mcp.json`
+- Linux: `~/.config/.cursor/mcp.json`
 
 ## Available Tools
 
@@ -169,46 +221,6 @@ Clear the local cache for F1 data.
 - Live data: F1 Live Timing API (OpenF1)
 - Historical: Ergast API (FastF1)
 
-## Getting Started
-
-1. Clone the repo:
-```bash
-git clone https://github.com/Panth1823/formula1-mcp
-cd formula1-mcp
-```
-
-2. Install:
-```bash
-npm install
-```
-
-3. Build:
-```bash
-npm run build
-```
-
-## Setup
-
-Add to your MCP client config:
-
-```json
-{
-  "mcpServers": {
-    "formula1": {
-      "command": "node",
-      "args": ["<path-to-your-cloned-repo>/build/index.js"],
-      "cwd": "<path-to-your-cloned-repo>",
-      "enabled": true
-    }
-  }
-}
-```
-
-Config locations:
-- Windows: `%APPDATA%\.cursor\mcp.json`
-- MacOS: `~/.cursor/mcp.json`
-- Linux: `~/.config/.cursor/mcp.json`
-
 ## Examples
 
 - "Show 2023 Monaco GP results"
@@ -228,3 +240,7 @@ Use [MCP Inspector](https://github.com/modelcontextprotocol/inspector) for debug
 - Bugs? [Report here](https://github.com/Panth1823/formula1-mcp/issues)
 - Questions? Open an issue
 - Want to help? Submit a PR
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
