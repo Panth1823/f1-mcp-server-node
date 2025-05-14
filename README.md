@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/panth1823-formula1-mcp-badge.png)](https://mseep.ai/app/panth1823-formula1-mcp)
+
 [![smithery badge](https://smithery.ai/badge/@Panth1823/formula1-mcp)](https://smithery.ai/server/@Panth1823/formula1-mcp)
 
 # The Formula1 MCP Server ! 🏎️💨
